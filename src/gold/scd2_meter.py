@@ -27,7 +27,7 @@ def scd2_merge_sql(catalog: str, schema: str) -> str:
     table = f"{catalog}.{schema}.dim_meter"
     return f"""
 -- SCD Type 2 contract for {table}
--- 1. Expire the current version when a tracked attribute changes.
+-- Step 1: expire the current version when a tracked attribute changes.
 MERGE INTO {table} AS target
 USING meter_changes AS source
 ON target.meter_id = source.meter_id
@@ -38,11 +38,11 @@ WHEN MATCHED AND target.region <> source.region THEN
     target.effective_to = current_date(),
     target.is_current = false;
 
--- 2. Insert the new current version in a follow-up MERGE/INSERT step.
+-- Step 2: insert the incoming version as the new current record.
 INSERT INTO {table}
   (meter_key, meter_id, region, effective_from, effective_to, is_current)
 SELECT
-  xxhash64(meter_id, effective_from),
+  xxhash64(meter_id, current_date()),
   meter_id,
   region,
   current_date(),
