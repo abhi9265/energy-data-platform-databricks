@@ -1,0 +1,19 @@
+bundle:
+  name: energy-data-platform
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: Unity Catalog catalog for the target environment
+    default: energy_dev
+  schema:
+    description: Analytics schema for the target environment
+    default: analytics
+
+sync:
+  include:
+    - notebooks/**
+    - src/**
+    - config/**

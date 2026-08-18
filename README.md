@@ -1,46 +1,85 @@
 # Energy Data Platform on Databricks
 
-An end-to-end Data Engineering portfolio project using Azure Databricks, PySpark, Delta Lake, SQL, and the Medallion Architecture.
-
-## Goal
-Build a production-style energy analytics platform that ingests operational energy data, applies data-quality and transformation logic, and publishes trusted business-ready datasets.
+A production-style Data Engineering portfolio project demonstrating Azure Databricks, PySpark, Delta Lake, Spark SQL, GitHub Actions, Unity Catalog conventions, dimensional modelling, data-quality engineering, and BI design.
 
 ## Architecture
 
 ```text
-Source Systems -> Bronze -> Silver -> Gold -> BI / Analytics
+Source Systems
+      |
+      v
+   BRONZE -------- raw + lineage + ingestion metadata
+      |
+      v
+   SILVER -------- validation + standardization + quarantine + deduplication
+      |
+      v
+    GOLD --------- star schema + SCD2 + incremental MERGE + KPIs
+      |
+      +--------------------+
+      |                    |
+      v                    v
+   Power BI          Operational Audit
+
+CI/CD validates every pull request before promotion to main.
 ```
 
 ## Technology Stack
+
 - Azure Databricks
-- PySpark
-- Spark SQL
+- PySpark / Spark SQL
 - Delta Lake
-- Python
-- Git / GitHub
-- Power BI (planned)
-- Azure Data Lake Storage (planned)
+- Databricks Asset Bundles
+- Unity Catalog
+- Python / pytest
+- GitHub Actions
+- Power BI semantic modelling
 
-## Planned Domains
-1. Energy meter / revenue data
-2. Billing and statement data
-3. Reference and mapping data
-4. Weather and external supporting data
+## Engineering Controls
 
-## Engineering Principles
-- Idempotent pipelines
-- Incremental processing
-- Schema enforcement and controlled evolution
-- Data quality validation
-- Auditability and traceability
-- Reusable transformations
-- Separation of raw, curated, and business layers
+- Explicit schemas and data contracts
+- Deterministic business keys and deduplication
+- Quarantine for rejected records
+- Configurable data-quality promotion gates
+- SCD Type 2 dimension design
+- Incremental Delta MERGE patterns
+- Dev / test / prod configuration separation
+- Pipeline audit events
+- CI unit-test and quality-gate workflow
+- Unity Catalog three-level namespace conventions
+- BI contract isolated to Gold datasets
 
-## Roadmap
-- Phase 1: Foundation and Bronze ingestion
-- Phase 2: Silver cleansing and standardization
-- Phase 3: Gold analytics and KPIs
-- Phase 4: Testing, CI/CD, monitoring, and deployment
+## Repository Structure
+
+```text
+.github/workflows/       CI/CD automation
+config/                  environment + governance configuration
+data/sample/             controlled sample source data
+docs/                    architecture, modelling, BI and operational docs
+notebooks/               Databricks orchestration notebooks
+resources/               Databricks job definitions
+src/bronze/              source-aligned ingestion
+src/silver/              curation and data quality
+src/gold/                dimensional model, KPIs and SCD2
+src/observability/       pipeline audit framework
+src/quality/             reusable data-quality gates
+tests/                   Spark unit and contract tests
+databricks.yml           Databricks Asset Bundle entry point
+```
+
+## Development Workflow
+
+1. Create a feature branch.
+2. Implement and test the change.
+3. Open a pull request to `main`.
+4. GitHub Actions runs PySpark unit tests and data-quality contract tests.
+5. Review and merge only after validation.
+6. Deploy through environment-specific Databricks configuration.
+
+## Business Domain
+
+The initial domain models energy meter readings and can be extended with revenue, billing statements, reference mappings, and weather inputs.
 
 ## Status
-**Phase 1 — Foundation**
+
+**Engineering Foundation — CI/CD, quality gates, environment contracts, SCD2, observability and BI foundations in progress.**

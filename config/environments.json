@@ -1,0 +1,17 @@
+{
+  "dev": {
+    "catalog": "energy_dev",
+    "schema": "analytics",
+    "volume_root": "/Volumes/energy_dev"
+  },
+  "test": {
+    "catalog": "energy_test",
+    "schema": "analytics",
+    "volume_root": "/Volumes/energy_test"
+  },
+  "prod": {
+    "catalog": "energy_prod",
+    "schema": "analytics",
+    "volume_root": "/Volumes/energy_prod"
+  }
+}
