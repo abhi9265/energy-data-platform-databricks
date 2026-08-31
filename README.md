@@ -6,9 +6,11 @@
 >
 > **Topics:** `PySpark` · `Databricks` · `Delta Lake` · `Spark SQL` · `Data Quality` · `SCD2` · `Incremental Processing` · `Data Engineering`
 
-A production-oriented **Databricks lakehouse prototype** showing how energy meter data can be ingested, validated, deduplicated, modeled and prepared for BI workloads.
+## At a glance
 
-> **Portfolio focus:** PySpark, Delta Lake, dimensional modeling, SCD Type 2 patterns, incremental processing, data quality, CI/CD, Unity Catalog conventions, auditability and semantic analytics.
+A production-oriented **Databricks lakehouse prototype** that turns operational energy meter data into governed, analytics-ready datasets. The repository demonstrates Bronze/Silver/Gold processing, quality controls, dimensional modeling, SCD Type 2 and incremental-processing patterns, with local tests and CI evidence.
+
+> **Evidence boundary:** local execution verifies the transformation and quality path. A real Databricks workspace deployment, executable incremental MERGE orchestration and full SCD2 transaction wiring are intentionally identified as hardening work rather than presented as completed production evidence.
 
 ## Business Problem
 
@@ -36,30 +38,94 @@ Source Systems
 Power BI       Operational Audit
 ```
 
-## Technology
+## Architecture → Code Map
 
-- Azure Databricks
-- PySpark / Spark SQL
-- Delta Lake
-- Databricks Asset Bundles
-- Unity Catalog conventions
-- Python / pytest
-- GitHub Actions
-- Power BI semantic-model contract
+| Architecture layer | Repository implementation | Purpose |
+|---|---|---|
+| Bronze | `src/bronze/` | Source-aligned ingestion, explicit schema and lineage |
+| Silver | `src/silver/` | Standardization, validation, quarantine and deterministic deduplication |
+| Gold | `src/gold/` | Facts, dimensions, KPIs and modeling foundations |
+| Quality | `src/quality/` | Reusable data-quality gates and thresholds |
+| Observability | `src/observability/` | Pipeline audit framework and audit events |
+| Orchestration | `notebooks/` + `resources/` | Databricks execution/job configuration |
+| Deployment | `databricks.yml` | Databricks Asset Bundle entry point |
+| Tests | `tests/` | Spark transformations and data/contract verification |
 
-## Engineering Controls
+## Engineering Capabilities
 
-- Explicit schemas and data contracts
-- Deterministic business keys and deduplication
-- Quarantine for rejected records
-- Reusable data-quality thresholds
-- SCD Type 2 dimension design/patterns
-- Incremental Delta MERGE patterns
-- Dev/test/prod configuration contracts
-- Pipeline audit events
-- CI unit-test and data-quality gates
-- Unity Catalog three-level namespace conventions
-- Gold-layer BI contract
+| Area | Demonstrated capability |
+|---|---|
+| Lakehouse | Bronze/Silver/Gold Delta architecture |
+| Processing | PySpark and Spark SQL transformations |
+| Data quality | Contract validation, rejection handling and quarantine |
+| Reliability | Deterministic business keys and deduplication |
+| Modeling | Dimensional/KPI foundations and SCD Type 2 patterns |
+| Incremental processing | Delta MERGE patterns |
+| Governance | Unity Catalog three-level namespace conventions |
+| Observability | Pipeline audit framework |
+| Testing | PySpark and contract tests |
+| CI/CD | GitHub Actions validation |
+| BI | Gold-layer / Power BI semantic-model contract |
+
+## Execution Evidence
+
+### Verified local path
+
+The repository is designed to run its transformation verification without requiring a Databricks workspace:
+
+```bash
+python -m pip install -e .
+pytest
+```
+
+The documented demo uses the controlled sample dataset to exercise the Bronze → Silver → Gold transformation path, including schema/lineage, validation, quarantine, deduplication and Gold fact/dimension/KPI transformations. fileciteturn1032file0
+
+### What this evidence proves
+
+```text
+controlled sample data
+        ↓
+explicit Bronze schema + lineage
+        ↓
+Silver validation + quarantine + deduplication
+        ↓
+Gold fact/dimension + KPI transformations
+```
+
+This is **local transformation evidence**, not a claim of a completed Databricks production deployment. The repository explicitly keeps Asset Bundle deployment, incremental MERGE orchestration and full SCD2 transaction wiring in the hardening boundary. fileciteturn1032file0
+
+## Run the Demo
+
+```bash
+git clone https://github.com/abhi9265/energy-data-platform-databricks.git
+cd energy-data-platform-databricks
+python -m pip install -e .
+pytest
+```
+
+For the short reproducible path, see [`docs/DEMO.md`](docs/DEMO.md).
+
+## Data Flow
+
+```text
+Meter reading
+     ↓
+Bronze ingestion + lineage
+     ↓
+Schema / quality validation
+     ├── rejected → quarantine
+     └── accepted
+           ↓
+       deduplication
+           ↓
+         Silver
+           ↓
+   dimensional + KPI models
+           ↓
+          Gold
+           ↓
+      Power BI / analytics
+```
 
 ## Repository Structure
 
@@ -79,19 +145,6 @@ tests/               Spark and contract tests
 databricks.yml       Asset Bundle entry point
 ```
 
-## Local Development
-
-The repository is designed to be testable without a Databricks workspace:
-
-```bash
-python -m pip install -e .
-pytest
-```
-
-The tests exercise the PySpark transformations and data-quality contracts locally. Databricks deployment is represented through the Asset Bundle configuration and requires a configured Databricks environment.
-
-See [`docs/DEMO.md`](docs/DEMO.md) for the short reproducible local execution path and what it proves.
-
 ## Development Workflow
 
 1. Create a feature branch.
@@ -100,10 +153,6 @@ See [`docs/DEMO.md`](docs/DEMO.md) for the short reproducible local execution pa
 4. GitHub Actions validates the test and data-quality gates.
 5. Review and merge only after validation.
 6. Promote through environment-specific Databricks configuration.
-
-## Business Domain
-
-The initial model covers energy meter readings and is designed to extend to revenue, billing, reference mappings and external weather inputs.
 
 ## Implementation Status
 
@@ -125,3 +174,17 @@ The initial model covers energy meter readings and is designed to extend to reve
 - Expand end-to-end operational observability and production SLAs
 
 This distinction is intentional: the repository documents implemented code separately from deployment hardening so that the portfolio does not overstate production readiness.
+
+## Interview Topics
+
+This project supports discussions around:
+
+- Bronze/Silver/Gold lakehouse design
+- Data-quality and quarantine strategy
+- Deterministic deduplication
+- Dimensional modeling and serving-layer grain
+- SCD Type 2 and incremental MERGE design
+- Unity Catalog and environment configuration
+- Pipeline auditability
+- CI/CD for data platforms
+- Designing analytics-ready data for BI workloads
