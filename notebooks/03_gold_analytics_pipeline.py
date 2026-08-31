@@ -9,6 +9,7 @@
 
 # COMMAND ----------
 
+from delta.tables import DeltaTable
 from src.gold.gold_model import (
     build_dim_date,
     build_dim_meter,
@@ -55,8 +56,12 @@ if DeltaTable.isDeltaTable(spark, DIM_DATE_PATH):
 else:
     dim_date.write.format("delta").mode("overwrite").save(DIM_DATE_PATH)
 
-# SCD2 meter changes: close the current version before inserting the new
-# version. New meters are inserted directly by the same MERGE contract.
+# COMMAND ----------
+
+# SCD2 is deliberately two-phase. A Delta MERGE cannot both match and insert
+# the same source row, so we first close changed current versions and then
+# insert the new versions. Replaying an unchanged Silver slice produces no
+# changes because build_scd2_meter_updates filters unchanged current records.
 if DeltaTable.isDeltaTable(spark, DIM_METER_PATH):
     current_meter = spark.read.format("delta").load(DIM_METER_PATH)
     changes = build_scd2_meter_updates(current_meter, silver_df)
@@ -65,21 +70,19 @@ if DeltaTable.isDeltaTable(spark, DIM_METER_PATH):
         (
             target.alias("target")
             .merge(
-                changes.alias("source"),
+                changes.select("meter_id", "effective_from").alias("source"),
                 "target.meter_id = source.meter_id AND target.is_current = true",
             )
             .whenMatchedUpdate(
                 set={"is_current": "false", "effective_to": "source.effective_from"}
             )
-            .whenNotMatchedInsertAll()
             .execute()
         )
+        changes.write.format("delta").mode("append").save(DIM_METER_PATH)
 else:
     dim_meter.write.format("delta").mode("overwrite").save(DIM_METER_PATH)
 
 # COMMAND ----------
-
-from delta.tables import DeltaTable
 
 print(f"dim_meter rows: {spark.read.format('delta').load(DIM_METER_PATH).count()}")
 print(f"dim_date rows: {spark.read.format('delta').load(DIM_DATE_PATH).count()}")
