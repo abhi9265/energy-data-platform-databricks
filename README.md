@@ -2,6 +2,10 @@
 
 [![CI](https://github.com/abhi9265/energy-data-platform-databricks/actions/workflows/ci.yml/badge.svg)](https://github.com/abhi9265/energy-data-platform-databricks/actions/workflows/ci.yml)
 
+> **Databricks lakehouse portfolio project:** ingest, validate, deduplicate and model energy meter data with PySpark, Delta Lake, data-quality controls and BI-ready outputs.
+>
+> **Topics:** `PySpark` · `Databricks` · `Delta Lake` · `Spark SQL` · `Data Quality` · `SCD2` · `Incremental Processing` · `Data Engineering`
+
 A production-oriented **Databricks lakehouse prototype** showing how energy meter data can be ingested, validated, deduplicated, modeled and prepared for BI workloads.
 
 > **Portfolio focus:** PySpark, Delta Lake, dimensional modeling, SCD Type 2 patterns, incremental processing, data quality, CI/CD, Unity Catalog conventions, auditability and semantic analytics.
