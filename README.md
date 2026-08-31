@@ -86,6 +86,8 @@ pytest
 
 The tests exercise the PySpark transformations and data-quality contracts locally. Databricks deployment is represented through the Asset Bundle configuration and requires a configured Databricks environment.
 
+See [`docs/DEMO.md`](docs/DEMO.md) for the short reproducible local execution path and what it proves.
+
 ## Development Workflow
 
 1. Create a feature branch.
