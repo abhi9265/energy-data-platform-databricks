@@ -51,6 +51,50 @@ Power BI       Operational Audit
 | Deployment | `databricks.yml` | Databricks Asset Bundle entry point |
 | Tests | `tests/` | Spark transformations and data/contract verification |
 
+## Gold Layer → Power BI Report Preview
+
+The Gold layer exposes BI-ready facts, dimensions and daily regional KPIs. The actual Gold model calculates total energy consumption, average meter reading, active meter count, reading count and kWh per active meter at **date × region** grain. fileciteturn1071file0
+
+### Energy Operations Dashboard
+
+```text
+┌──────────────────────────────────────────────────────────────────┐
+│ ENERGY OPERATIONS — GOLD LAYER / POWER BI REPORT PREVIEW        │
+├──────────────────┬──────────────────┬───────────────────────────┤
+│ TOTAL ENERGY     │ AVG READING      │ ACTIVE METERS             │
+│ total_energy_kwh │ avg_meter_       │ active_meter_count        │
+│                  │ reading_kwh      │                           │
+├──────────────────┼──────────────────┼───────────────────────────┤
+│ READINGS         │ KWH / METER      │ REPORT GRAIN              │
+│ reading_count    │ kwh_per_active_  │ Date × Region             │
+│                  │ meter             │                           │
+├──────────────────┴──────────────────┴───────────────────────────┤
+│                                                                  │
+│ REGIONAL ENERGY TREND                                             │
+│                                                                  │
+│ Region A  █████████████████████████                             │
+│ Region B  ███████████████████                                   │
+│ Region C  ███████████████                                       │
+│                                                                  │
+├──────────────────────────────────────────────────────────────────┤
+│ DETAIL: Date | Region | Total kWh | Avg kWh | Active Meters     │
+│         | Reading Count | kWh / Active Meter                    │
+├──────────────────────────────────────────────────────────────────┤
+│ Sources: Silver → Gold dimensional model → BI semantic layer    │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### Gold → BI semantic contract
+
+| Gold output | Grain | BI usage |
+|---|---|---|
+| `fact_energy` | Meter reading | Drill-through/detail and time analysis |
+| `dim_meter` | Meter | Region and meter slicing |
+| `dim_date` | Date | Calendar/time intelligence |
+| `energy_kpis` | Date × Region | Executive KPI cards, trends and regional comparison |
+
+> **Presentation note:** this is a **README Power BI-style report preview**, not a claim that a Power BI report has been deployed. It shows how the implemented Gold outputs can be consumed by a BI semantic model. fileciteturn1071file0
+
 ## Engineering Capabilities
 
 | Area | Demonstrated capability |
@@ -78,7 +122,7 @@ python -m pip install -e .
 pytest
 ```
 
-The documented demo uses the controlled sample dataset to exercise the Bronze → Silver → Gold transformation path, including schema/lineage, validation, quarantine, deduplication and Gold fact/dimension/KPI transformations. fileciteturn1032file0
+The documented demo uses the controlled sample dataset to exercise the Bronze → Silver → Gold transformation path, including schema/lineage, validation, quarantine, deduplication and Gold fact/dimension/KPI transformations. fileciteturn1065file0
 
 ### What this evidence proves
 
@@ -92,7 +136,7 @@ Silver validation + quarantine + deduplication
 Gold fact/dimension + KPI transformations
 ```
 
-This is **local transformation evidence**, not a claim of a completed Databricks production deployment. The repository explicitly keeps Asset Bundle deployment, incremental MERGE orchestration and full SCD2 transaction wiring in the hardening boundary. fileciteturn1032file0
+This is **local transformation evidence**, not a claim of a completed Databricks production deployment. The repository explicitly keeps Asset Bundle deployment, incremental MERGE orchestration and full SCD2 transaction wiring in the hardening boundary. fileciteturn1065file0
 
 ## Run the Demo
 
