@@ -6,7 +6,6 @@ business logic explicit, testable, and reusable.
 
 from pyspark.sql import DataFrame
 from pyspark.sql import functions as F
-from pyspark.sql.window import Window
 
 
 def build_dim_meter(silver_df: DataFrame) -> DataFrame:
