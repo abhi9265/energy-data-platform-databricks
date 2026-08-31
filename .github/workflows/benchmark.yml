@@ -1,6 +1,10 @@
 name: Benchmark
 
 on:
+  push:
+    paths:
+      - "benchmarks/**"
+      - ".github/workflows/benchmark.yml"
   workflow_dispatch:
     inputs:
       rows:
@@ -25,13 +29,17 @@ jobs:
         run: python -m pip install -e .
       - name: Run benchmark
         env:
-          BENCHMARK_ROWS: ${{ inputs.rows }}
+          BENCHMARK_ROWS: ${{ inputs.rows || '100000' }}
           BENCHMARK_OUT: benchmark-results
         run: python benchmarks/run_benchmark.py
+      - name: Publish benchmark summary
+        run: |
+          echo '## Energy Spark benchmark' >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat benchmark-results/results.json >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
       - name: Upload benchmark results
         uses: actions/upload-artifact@v4
         with:
-          name: energy-benchmark-${{ inputs.rows }}-rows
+          name: energy-benchmark-${{ inputs.rows || '100000' }}-rows
           path: benchmark-results/
-      - name: Print benchmark summary
-        run: cat benchmark-results/results.json
