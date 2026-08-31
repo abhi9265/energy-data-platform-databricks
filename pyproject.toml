@@ -9,6 +9,7 @@ description = "Production-style energy data platform using PySpark and Delta Lak
 requires-python = ">=3.10,<3.13"
 dependencies = [
   "pyspark==3.5.3",
+  "delta-spark==3.2.1",
   "pytest==8.3.5",
 ]
 
