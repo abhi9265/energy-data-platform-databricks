@@ -6,7 +6,13 @@ Databricks environment the same logic can write directly to a Delta table.
 
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.functions import current_timestamp, input_file_name, lit
-from pyspark.sql.types import DoubleType, StringType, StructField, StructType, TimestampType  # noqa: I001
+from pyspark.sql.types import (
+    DoubleType,
+    StringType,
+    StructField,
+    StructType,
+    TimestampType,
+)
 
 
 ENERGY_METER_SCHEMA = StructType(
