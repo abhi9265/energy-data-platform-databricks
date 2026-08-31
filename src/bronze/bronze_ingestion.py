@@ -4,6 +4,8 @@ The function keeps source values intact and adds ingestion metadata. In a
 Databricks environment the same logic can write directly to a Delta table.
 """
 
+# ruff: noqa: I001
+
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.functions import current_timestamp, input_file_name, lit
 from pyspark.sql.types import (
