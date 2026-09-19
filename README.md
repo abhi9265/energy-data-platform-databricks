@@ -10,7 +10,7 @@
 
 A production-oriented **Databricks lakehouse prototype** that turns operational energy meter data into governed, analytics-ready datasets. The repository demonstrates Bronze/Silver/Gold processing, quality controls, dimensional modeling, SCD Type 2 and incremental-processing patterns, with local tests and CI evidence.
 
-> **Evidence boundary:** local execution verifies the transformation and quality path. A real Databricks workspace deployment, executable incremental MERGE orchestration and full SCD2 transaction wiring are intentionally identified as hardening work rather than presented as completed production evidence.
+> **Evidence boundary:** local execution verifies the transformation and quality path. A real Databricks workspace deployment remains outside the verified evidence boundary. The repository does contain executable notebook orchestration for incremental MERGE and SCD2 processing; those runtime behaviors still require validation in an actual Databricks workspace.
 
 ## Business Problem
 
@@ -136,7 +136,7 @@ Silver validation + quarantine + deduplication
 Gold fact/dimension + KPI transformations
 ```
 
-This is **local transformation evidence**, not a claim of a completed Databricks production deployment. The repository explicitly keeps Asset Bundle deployment, incremental MERGE orchestration and full SCD2 transaction wiring in the hardening boundary. fileciteturn1065file0
+This is **local transformation evidence**, not a claim of a completed Databricks production deployment. Incremental MERGE and SCD2 orchestration are implemented in the Gold notebook, while actual Asset Bundle deployment and runtime execution remain unverified without a Databricks workspace. fileciteturn1065file0
 
 ## Run the Demo
 
@@ -204,7 +204,7 @@ databricks.yml       Asset Bundle entry point
 
 - Bronze ingestion with explicit schema and lineage metadata
 - Silver standardization, validation, quarantine and deterministic deduplication
-- Gold dimensional/KPI modeling foundations
+- Gold dimensional/KPI modeling with executable incremental MERGE and SCD2 notebook orchestration
 - Reusable data-quality and audit utilities
 - SCD Type 2 and incremental Delta MERGE patterns
 - PySpark tests and GitHub Actions CI
@@ -212,10 +212,9 @@ databricks.yml       Asset Bundle entry point
 
 ### Hardening / deployment work
 
-- Wire incremental MERGE logic into the executable notebook orchestration
-- Wire SCD2 transaction logic into the executable Gold path
-- Validate Asset Bundle deployment in a real Databricks workspace
-- Expand end-to-end operational observability and production SLAs
+- Validate Asset Bundle deployment and job execution in a real Databricks workspace
+- Validate runtime MERGE/SCD2 behavior and configured SLA thresholds in that workspace
+- Expand end-to-end operational observability with runtime evidence
 
 This distinction is intentional: the repository documents implemented code separately from deployment hardening so that the portfolio does not overstate production readiness.
 
