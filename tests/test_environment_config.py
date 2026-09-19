@@ -21,3 +21,14 @@ def test_environment_config_has_required_environments_and_isolation():
 def test_production_environment_uses_production_catalog():
     config = json.loads(Path("config/environments.json").read_text())
     assert config["prod"]["catalog"] == "energy_prod"
+
+
+def test_bundle_targets_match_environment_config():
+    bundle = Path("databricks.yml").read_text()
+    config = json.loads(Path("config/environments.json").read_text())
+
+    for environment, values in config.items():
+        assert f"  {environment}:" in bundle
+        assert f"environment: {environment}" in bundle
+        assert f"catalog: {values['catalog']}" in bundle
+        assert f"volume_root: {values['volume_root']}" in bundle
