@@ -17,3 +17,7 @@ The SLA evaluator checks pipeline success, maximum execution duration, and maxim
 A Databricks deployment should configure an environment-specific <catalog>.ops.pipeline_audit table and grant the job identity least-privilege access.
 
 No benchmark or SLA result is claimed until produced by a reproducible Databricks execution.
+
+## Job resilience
+
+The Databricks job resource uses a bounded operational policy: a 1-hour run timeout, up to 2 retries, a 60-second minimum retry interval, and retry-on-timeout enabled. These settings are deployment configuration rather than proof of a live production run.
