@@ -5,12 +5,41 @@ include:
   - resources/*.yml
 
 variables:
+  environment:
+    description: Deployment environment
+    default: dev
   catalog:
     description: Unity Catalog catalog for the target environment
     default: energy_dev
   schema:
     description: Analytics schema for the target environment
     default: analytics
+  volume_root:
+    description: Volume root for the target environment
+    default: /Volumes/energy_dev
+
+targets:
+  dev:
+    default: true
+    variables:
+      environment: dev
+      catalog: energy_dev
+      schema: analytics
+      volume_root: /Volumes/energy_dev
+
+  test:
+    variables:
+      environment: test
+      catalog: energy_test
+      schema: analytics
+      volume_root: /Volumes/energy_test
+
+  prod:
+    variables:
+      environment: prod
+      catalog: energy_prod
+      schema: analytics
+      volume_root: /Volumes/energy_prod
 
 sync:
   include:
