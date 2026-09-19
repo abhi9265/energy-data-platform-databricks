@@ -5,7 +5,36 @@
 # MAGIC Builds a BI-ready dimensional model from Silver data and persists the
 # MAGIC incremental Gold state with transactional Delta MERGE operations.
 # MAGIC
-# MAGIC **Outputs:** `dim_meter`, `dim_date`, `fact_energy`, and `energy_daily_kpis`.
+# MAGIC The target environment is supplied by job parameters rather than being
+# MAGIC hard-coded, so the same code path can be promoted across dev/test/prod.
+
+# COMMAND ----------
+
+dbutils.widgets.text("environment", "dev", "Environment")
+dbutils.widgets.text("catalog", "energy_dev", "Unity Catalog")
+dbutils.widgets.text("schema", "analytics", "Schema")
+dbutils.widgets.text("volume_root", "/Volumes/energy_dev", "Volume root")
+
+ENVIRONMENT = dbutils.widgets.get("environment").strip().lower()
+CATALOG = dbutils.widgets.get("catalog").strip()
+SCHEMA = dbutils.widgets.get("schema").strip()
+VOLUME_ROOT = dbutils.widgets.get("volume_root").rstrip("/")
+
+if ENVIRONMENT not in {"dev", "test", "prod"}:
+    raise ValueError(f"Unsupported environment: {ENVIRONMENT}")
+if not CATALOG.startswith("energy_"):
+    raise ValueError(f"Unexpected catalog: {CATALOG}")
+if not VOLUME_ROOT.startswith("/Volumes/"):
+    raise ValueError(f"Unexpected volume root: {VOLUME_ROOT}")
+
+SILVER_PATH = f"{VOLUME_ROOT}/silver/energy_meter_readings"
+GOLD_BASE = f"{VOLUME_ROOT}/gold"
+DIM_METER_PATH = f"{GOLD_BASE}/dim_meter"
+DIM_DATE_PATH = f"{GOLD_BASE}/dim_date"
+FACT_ENERGY_PATH = f"{GOLD_BASE}/fact_energy"
+KPI_PATH = f"{GOLD_BASE}/energy_daily_kpis"
+
+print(f"Running Gold pipeline for environment={ENVIRONMENT}, catalog={CATALOG}, schema={SCHEMA}")
 
 # COMMAND ----------
 
@@ -21,15 +50,6 @@ from src.gold.incremental import (
     upsert_daily_kpis,
     upsert_fact_energy,
 )
-
-SILVER_PATH = "/Volumes/energy_dev/silver/energy_meter_readings"
-GOLD_BASE = "/Volumes/energy_dev/gold"
-DIM_METER_PATH = f"{GOLD_BASE}/dim_meter"
-DIM_DATE_PATH = f"{GOLD_BASE}/dim_date"
-FACT_ENERGY_PATH = f"{GOLD_BASE}/fact_energy"
-KPI_PATH = f"{GOLD_BASE}/energy_daily_kpis"
-
-# COMMAND ----------
 
 silver_df = spark.read.format("delta").load(SILVER_PATH)
 
