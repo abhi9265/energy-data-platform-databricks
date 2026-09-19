@@ -147,7 +147,7 @@ python -m pip install -e .
 pytest
 ```
 
-For the short reproducible path, see [`docs/DEMO.md`](docs/DEMO.md).
+For the short reproducible path, see [`docs/DEMO.md`](docs/DEMO.md). For workspace deployment validation, see [`docs/deployment-runbook.md`](docs/deployment-runbook.md).
 
 ## Data Flow
 
