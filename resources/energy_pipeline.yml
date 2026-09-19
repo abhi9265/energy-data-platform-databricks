@@ -7,13 +7,28 @@ resources:
         - task_key: bronze_ingestion
           notebook_task:
             notebook_path: ${workspace.file_path}/notebooks/01_bronze_energy_ingestion
+            base_parameters:
+              environment: ${var.environment}
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+              volume_root: ${var.volume_root}
         - task_key: silver_quality
           depends_on:
             - task_key: bronze_ingestion
           notebook_task:
             notebook_path: ${workspace.file_path}/notebooks/02_silver_quality_pipeline
+            base_parameters:
+              environment: ${var.environment}
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+              volume_root: ${var.volume_root}
         - task_key: gold_analytics
           depends_on:
             - task_key: silver_quality
           notebook_task:
             notebook_path: ${workspace.file_path}/notebooks/03_gold_analytics_pipeline
+            base_parameters:
+              environment: ${var.environment}
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+              volume_root: ${var.volume_root}
