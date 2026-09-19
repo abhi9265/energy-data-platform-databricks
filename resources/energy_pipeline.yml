@@ -3,6 +3,10 @@ resources:
     energy_daily_pipeline:
       name: energy-daily-pipeline
       max_concurrent_runs: 1
+      timeout_seconds: 3600
+      max_retries: 2
+      min_retry_interval_millis: 60000
+      retry_on_timeout: true
       tasks:
         - task_key: bronze_ingestion
           notebook_task:
