@@ -34,3 +34,25 @@ def test_quality_gate_rejects_excessive_bad_records(spark):
     )
 
     assert result.passed is False
+
+
+def test_quality_gate_rejects_duplicate_business_keys(spark):
+    df = spark.createDataFrame(
+        [
+            ("MTR001", "2026-08-01 00:00:00", "VALID"),
+            ("MTR001", "2026-08-01 00:00:00", "VALID"),
+            ("MTR002", "2026-08-01 00:00:00", "VALID"),
+        ],
+        ["meter_id", "reading_timestamp", "dq_status"],
+    )
+
+    result = evaluate_quality(
+        df,
+        ["meter_id", "reading_timestamp"],
+        QualityThresholds(max_rejection_rate=0.10, max_duplicate_rate=0.20, min_valid_rate=0.90),
+    )
+
+    assert result.total_rows == 3
+    assert result.duplicate_rows == 1
+    assert result.duplicate_rate == 1 / 3
+    assert result.passed is False
