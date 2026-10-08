@@ -4,9 +4,12 @@ from __future__ import annotations
 import csv
 import json
 import os
+import platform
 import subprocess
 import time
 from pathlib import Path
+
+import pyspark
 
 OUT = Path(os.getenv("BENCHMARK_OUT", "benchmark-results"))
 TARGET = os.getenv("BENCHMARK_TARGET", "tests/test_gold_model.py")
@@ -30,6 +33,8 @@ def main() -> None:
         "target": TARGET,
         "runtime_seconds": round(elapsed, 3),
         "status": "passed",
+        "python_version": platform.python_version(),
+        "pyspark_version": pyspark.__version__,
     }
     (OUT / "results.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
     with (OUT / "results.csv").open("w", newline="", encoding="utf-8") as handle:
